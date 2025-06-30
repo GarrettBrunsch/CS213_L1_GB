@@ -73,13 +73,13 @@ public class MadLibs
             if (input.hasNextDouble())
             {
                 value = input.nextDouble();
-                input.nextLine(); // consume newline
+                input.nextLine();
                 validInput = true;
             }
             else
             {
                 System.out.print(errorMessage);
-                input.nextLine(); // consume the invalid input
+                input.nextLine();
             }
         }
 
