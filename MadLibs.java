@@ -6,43 +6,42 @@ import java.util.Scanner;
 
 public class MadLibs
 {
+    enum MenuChoice
+    {
+        PLAY, QUIT, INVALID;
+
+        public static MenuChoice convertFromInt(int choice)
+        {
+            return (choice == 1) ? PLAY : (choice == 2) ? QUIT : INVALID;
+        }
+    }
+
     private static final Scanner input = new Scanner(System.in);
 
     public static void main(String[] args)
     {
-        int choice = 0; // Forces default case with invalid input
-        boolean continueProgram = true;
+        MenuChoice choice;
 
-        System.out.println("Welcome to Mad Libs");
-
-        while (continueProgram)
+        do
         {
             displayMenu();
-
-            if (input.hasNextInt())
-            {
-                choice = input.nextInt();
-                input.nextLine();
-            }
-            else
-            {
-                input.nextLine();
-            }
+            int userInput = getMenuChoice();
+            choice = MenuChoice.convertFromInt(userInput);
 
             switch (choice)
             {
-                case 1:
+                case PLAY:
                     playMadLibs();
                     break;
-                case 2:
-                    continueProgram = false;
+                case QUIT:
                     System.out.println("Thanks for playing Mad Libs! Now exiting program...");
                     break;
                 default:
                     System.out.println("Invalid choice! Please select 1 or 2");
                     break;
             }
-        }
+        } while (choice != MenuChoice.QUIT);
+        input.close();
     }
 
     public static int getMenuChoice()
@@ -52,36 +51,24 @@ public class MadLibs
         if (input.hasNextInt())
         {
             choice = input.nextInt();
-            input.nextLine();
         }
-        else
-        {
-            input.nextLine();
-        }
+        input.nextLine();
+
         return choice;
     }
 
     public static double getValidDouble(String prompt, String errorMessage)
     {
-        double value = 0.0;
-        boolean validInput = false;
-
         System.out.print(prompt);
 
-        while (!validInput)
+        while (!input.hasNextDouble())
         {
-            if (input.hasNextDouble())
-            {
-                value = input.nextDouble();
-                input.nextLine();
-                validInput = true;
-            }
-            else
-            {
-                System.out.print(errorMessage);
-                input.nextLine();
-            }
+            System.out.print(errorMessage);
+            input.nextLine();
         }
+
+        double value = input.nextDouble();
+        input.nextLine();
 
         return value;
     }
@@ -90,11 +77,13 @@ public class MadLibs
     {
         int age = -1;
         System.out.print("Enter an age: ");
+
         while (!input.hasNextInt())
         {
             System.out.print("Please enter a valid number for age: ");
             input.nextLine();
         }
+
         age = input.nextInt();
         input.nextLine();
 
@@ -125,10 +114,10 @@ public class MadLibs
 
     public static void displayMenu()
     {
-        System.out.println("\n\n=== Mad Libs Menu ===");
-        System.out.println("1. Play Mad Libs");
-        System.out.println("2. Quit");
-        System.out.print("Enter your choice (1 or 2): ");
+        System.out.print("\n\n=== Mad Libs Menu ===\n"+
+            "1. Play Mad Libs\n"+
+            "2. Quit\n"+
+            "Enter your choice (1 or 2): ");
     }
 
     public static void playMadLibs()
@@ -137,7 +126,6 @@ public class MadLibs
 
         MadLibsData data = collectUserInput();
         displayStory(data);
-        playAgain();
     }
 
     static MadLibsData collectUserInput()
@@ -155,45 +143,19 @@ public class MadLibs
 
     static void displayStory(MadLibsData data)
     {
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("          MAD LIBS STORY");
-        System.out.println("=".repeat(50));
+        final int SPACING = 50;
+        String separator = "=".repeat(SPACING);
 
-        System.out.println("Once upon a time, there was a " + data.adjective + " wizard who was");
-        System.out.println("searching to find the fabled " + data.noun + " of Camelot! This");
-        System.out.println("wizard was " + data.age + " years old and was a staggering " + data.height + " ft tall.");
-        System.out.println("After what felt like a lifetime of searching, the fabled " +data.noun+ " ");
-        System.out.println("had finally been found! Now that the wizard's dream of finding the legendary " + data.noun + " ");
-        System.out.println("was over they returned with the " +data.noun + " in hand and retired to the countryside!");
+        String output = "\n" + separator + "\n" +
+                "Once upon a time, there was a " + data.adjective + " wizard who was\n" +
+                "searching to find the fabled " + data.noun + " of Camelot! This\n" +
+                "wizard was " + data.age + " years old and was a staggering " + data.height + " ft tall.\n" +
+                "After what felt like a lifetime of searching, the fabled " + data.noun + "\n" +
+                "had finally been found! Now that the wizard's dream of finding the legendary " + data.noun + "\n" +
+                "was over they returned with the " + data.noun + " in hand and retired to the countryside!\n" +
+                separator;
 
-        System.out.println("=".repeat(50));
-    }
-
-    public static void playAgain()
-    {
-        String playAgainChoice;
-        boolean validChoice = false;
-
-        while (!validChoice)
-        {
-            System.out.print("\nWould you like to create another story?: ");
-            playAgainChoice = input.nextLine().toLowerCase();
-
-            if (playAgainChoice.equals("y") || playAgainChoice.equals("yes"))
-            {
-                playMadLibs();
-                validChoice = true;
-            }
-            else if (playAgainChoice.equals("n") || playAgainChoice.equals("no"))
-            {
-                System.out.println("Returning to main menu...");
-                validChoice = true;
-            }
-            else
-            {
-                System.out.println("Please enter 'y' for yes or 'n' for no");
-            }
-        }
+        System.out.println(output);
     }
 }
 
